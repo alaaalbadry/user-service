@@ -15,13 +15,28 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/list")
+    @GetMapping("/public/welcome")
+    public String welcome() {
+        return "Welcome to the public API!";
+    }
+
+    @GetMapping("/user/profile")
+    public String userProfile() {
+        return "This is a user profile. Accessible only by USER role.";
+    }
+
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard() {
+        return "Admin dashboard. Accessible only by ADMIN role.";
+    }
+
+    @GetMapping("/admin/list")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/admin/create")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         User createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);    }
