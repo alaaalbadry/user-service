@@ -3,6 +3,8 @@ package com.micro.demo_user.controller;
 import com.micro.demo_user.dto.PlaceOrderRequest;
 import com.micro.demo_user.model.User;
 import com.micro.demo_user.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ public class UserController {
     @Autowired
     private RestTemplate restTemplate;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @GetMapping("/public")
     public String welcome() {
         return "Welcome to the public API!";
@@ -33,6 +37,9 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody User user) {
+        logger.info("🚀 User service started!");
+        logger.info("Creating user with email: {}", user.getEmail());
+
         User createdUser = userService.createUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
