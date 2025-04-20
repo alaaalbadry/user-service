@@ -2,10 +2,11 @@ package com.micro.demo_user.service;
 
 import com.micro.demo_user.model.User;
 import com.micro.demo_user.model.UserRepository;
-import org.hibernate.StaleObjectStateException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.StaleObjectStateException;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,6 +16,7 @@ public class UserService {
 
     @Autowired
     private final UserRepository userRepository;
+
     @Autowired private UserEventPublisher userEventPublisher;
 
     public UserService(UserRepository userRepository) {
@@ -42,5 +44,10 @@ public class UserService {
         }
         userEventPublisher.publishUserCreatedEvent("Hello from ( " + user.getName() + " ) user in user-service");
         return userRepository.save(user);
+    }
+    @Cacheable(value = "users", key = "#userId")
+    public User getUserById(Long userId) {
+        System.out.println("Fetching from DB for userId: " + userId);
+        return userRepository.findById(userId).orElse(null);
     }
 }
